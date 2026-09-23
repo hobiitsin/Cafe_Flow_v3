@@ -10,16 +10,9 @@ import com.example.cafe_flow_v3.ui.inventario.InventarioViewModel
 import com.example.cafe_flow_v3.ui.login.LoginViewModel
 import com.example.cafe_flow_v3.ui.pedidos.PedidosViewModel
 import com.example.cafe_flow_v3.ui.productos.ProductosViewModel
+import com.example.cafe_flow_v3.ui.reportes.ReportesViewModel
 import com.example.cafe_flow_v3.ui.ventas.VentasViewModel
 
-/**
- * "Fábrica" de ViewModels.
- * Un ViewModel no puede recibir parámetros en su constructor a menos que
- * le digas a Android cómo crearlo. Aquí le decimos: toma los repositorios
- * del AppContainer y pásaselos.
- *
- * Cada pantalla nueva agrega aquí su initializer { ... }.
- */
 object AppViewModelProvider {
 
     val Factory = viewModelFactory {
@@ -62,9 +55,15 @@ object AppViewModelProvider {
                 productoRepository = cafeFlowApp().container.productoRepository
             )
         }
+
+        initializer {
+            ReportesViewModel(
+                reporteRepository = cafeFlowApp().container.reporteRepository
+            )
+        }
     }
 }
 
-// Obtiene nuestra CafeFlowApplication (la que tiene el container)
+// Obtiene CafeFlowApplication (
 fun CreationExtras.cafeFlowApp(): CafeFlowApplication =
     this[APPLICATION_KEY] as CafeFlowApplication

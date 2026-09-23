@@ -1,7 +1,6 @@
 package com.example.cafe_flow_v3
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -42,11 +41,10 @@ fun LoginScreen(
     onLoginSuccess: () -> Unit,
     viewModel: LoginViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
-    // Cada vez que el ViewModel cambia el estado, la pantalla se redibuja
+
     val uiState by viewModel.uiState.collectAsState()
     val focusManager = LocalFocusManager.current
 
-    // Cuando el login sale bien, navegamos UNA sola vez
     LaunchedEffect(uiState.loginExitoso) {
         if (uiState.loginExitoso) {
             viewModel.onNavegacionHecha()
@@ -97,7 +95,7 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // Ilustración central
+        // Ilustracion central
         Box(
             modifier = Modifier
                 .size(170.dp)
@@ -161,32 +159,20 @@ fun LoginScreen(
             singleLine = true,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Email,
-                imeAction = ImeAction.Next // el teclado muestra "Siguiente"
+                imeAction = ImeAction.Next
             )
         )
 
         Spacer(modifier = Modifier.height(18.dp))
 
         // Campo Contraseña
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "Contraseña",
-                fontSize = 13.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = DarkBrown
-            )
-            Text(
-                text = "¿Olvidé mi contraseña?",
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Medium,
-                color = Terracotta,
-                modifier = Modifier.clickable { }
-            )
-        }
+        Text(
+            text = "Contraseña",
+            fontSize = 13.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = DarkBrown,
+            modifier = Modifier.fillMaxWidth()
+        )
         Spacer(modifier = Modifier.height(6.dp))
         OutlinedTextField(
             value = uiState.password,
@@ -217,7 +203,7 @@ fun LoginScreen(
             singleLine = true,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Password,
-                imeAction = ImeAction.Done // el teclado muestra "Listo"
+                imeAction = ImeAction.Done
             ),
             keyboardActions = KeyboardActions(
                 onDone = {
@@ -241,7 +227,7 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.height(28.dp))
 
-        // Botón Iniciar Sesión
+        // Botón Iniciar Sesion
         Button(
             onClick = {
                 focusManager.clearFocus()
@@ -272,32 +258,6 @@ fun LoginScreen(
                 )
             }
         }
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        // Registro (lo conectamos en el paso 8)
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(text = "¿No tienes una cuenta? ", fontSize = 13.sp, color = TextGray)
-            Text(
-                text = "Registrarse",
-                fontSize = 13.sp,
-                fontWeight = FontWeight.Bold,
-                color = Terracotta,
-                modifier = Modifier.clickable { }
-            )
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Ayuda para la demo (bórralo cuando entregues)
-        Text(
-            text = "Demo: barista@cafeflow.com · 12345678",
-            fontSize = 11.sp,
-            color = TextGray.copy(alpha = 0.8f)
-        )
 
         Spacer(modifier = Modifier.height(32.dp))
     }

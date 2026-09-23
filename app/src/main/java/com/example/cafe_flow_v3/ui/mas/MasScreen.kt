@@ -24,12 +24,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.cafe_flow_v3.ui.productos.ProductosScreen
+import com.example.cafe_flow_v3.ui.reportes.ReportesScreen
 import com.example.cafe_flow_v3.ui.theme.*
 
 private val ErrorRed = Color(0xFFC62828)
 
-// Secciones dentro de la pestaña "Más". Reportes se agrega en el paso 8.5.
-private enum class SeccionMas { MENU, PRODUCTOS }
+// Secciones dentro de la pestaña "Mas"
+private enum class SeccionMas { MENU, PRODUCTOS, REPORTES }
 
 @Composable
 fun MasScreen(
@@ -40,7 +41,7 @@ fun MasScreen(
 ) {
     var seccion by rememberSaveable { mutableStateOf(SeccionMas.MENU) }
 
-    // Dentro de una sección, "atrás" regresa al menú
+    // Dentro de una seccion, "atrás" regresa al menu
     BackHandler(enabled = seccion != SeccionMas.MENU) {
         seccion = SeccionMas.MENU
     }
@@ -49,11 +50,16 @@ fun MasScreen(
         SeccionMas.MENU -> MenuMas(
             nombreUsuario = nombreUsuario,
             onProductos = { seccion = SeccionMas.PRODUCTOS },
+            onReportes = { seccion = SeccionMas.REPORTES },
             onVerPedidos = onVerPedidos,
             onCerrarSesion = onCerrarSesion,
             modifier = modifier
         )
         SeccionMas.PRODUCTOS -> ProductosScreen(
+            onVolver = { seccion = SeccionMas.MENU },
+            modifier = modifier
+        )
+        SeccionMas.REPORTES -> ReportesScreen(
             onVolver = { seccion = SeccionMas.MENU },
             modifier = modifier
         )
@@ -64,6 +70,7 @@ fun MasScreen(
 private fun MenuMas(
     nombreUsuario: String,
     onProductos: () -> Unit,
+    onReportes: () -> Unit,
     onVerPedidos: () -> Unit,
     onCerrarSesion: () -> Unit,
     modifier: Modifier = Modifier
@@ -128,8 +135,7 @@ private fun MenuMas(
             icono = Icons.Outlined.BarChart,
             titulo = "Reportes",
             subtitulo = "Ventas por día, producto y plataforma",
-            proximamente = true,
-            onClick = {}
+            onClick = onReportes
         )
 
         Spacer(modifier = Modifier.height(28.dp))

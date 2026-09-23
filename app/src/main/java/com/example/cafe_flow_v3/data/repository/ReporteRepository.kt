@@ -10,6 +10,7 @@ import com.example.cafe_flow_v3.util.Fechas
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 
+// Todo lo que muestra el Dashboard, en un solo objeto
 data class ResumenDashboard(
     val ventasHoyCentavos: Long = 0,
     val variacionVsAyer: Int? = null, // +18 = 18% más que ayer. null si ayer no hubo ventas.
@@ -27,7 +28,10 @@ class ReporteRepository(
 
     /**
      * Junta las 7 consultas del dashboard en un solo Flow.
-     * Si cualquiera cambia se emite un resumen nuevo.
+     * Si cualquiera cambia (nueva venta, pedido completado...), se emite un resumen nuevo.
+     *
+     * Nota: "hoy" se calcula al llamar la función. Si la app queda abierta
+     * después de medianoche, hay que volver a llamarla.
      */
     fun resumenDelDia(): Flow<ResumenDashboard> {
         val inicioHoy = Fechas.inicioDelDia()
@@ -35,7 +39,7 @@ class ReporteRepository(
         val inicioAyer = Fechas.inicioDelDia(diasAtras = 1)
         val finAyer = Fechas.finDelDia(diasAtras = 1)
 
-        // combine acepta maximo 5 flows con tipos distintos
+        // combine acepta máximo 5 flows con tipos distintos, así que lo hacemos en dos partes
         val metricas = combine(
             reporteDao.observarVentasEntre(inicioHoy, finHoy),
             reporteDao.observarVentasEntre(inicioAyer, finAyer),
@@ -61,19 +65,24 @@ class ReporteRepository(
         }
     }
 
-    // dias Atras = 0 es hoy 1 es ayer
+    // ---------- Pantalla de Reportes ----------
+    // Reciben un rango en milisegundos (inicio y fin). El ViewModel decide
+    // si es un día, la última semana, etc. usando Fechas.
 
-    fun ventasDelDia(diasAtras: Int = 0): Flow<Long> =
-        reporteDao.observarVentasEntre(Fechas.inicioDelDia(diasAtras), Fechas.finDelDia(diasAtras))
+    fun ventasEntre(inicio: Long, fin: Long): Flow<Long> =
+        reporteDao.observarVentasEntre(inicio, fin)
 
-    fun pedidosDelDia(diasAtras: Int = 0): Flow<Int> =
-        reporteDao.observarCompletadosEntre(Fechas.inicioDelDia(diasAtras), Fechas.finDelDia(diasAtras))
+    fun pedidosCompletadosEntre(inicio: Long, fin: Long): Flow<Int> =
+        reporteDao.observarCompletadosEntre(inicio, fin)
 
-    fun ventasPorProducto(diasAtras: Int = 0): Flow<List<VentaPorProducto>> =
-        reporteDao.observarVentasPorProducto(Fechas.inicioDelDia(diasAtras), Fechas.finDelDia(diasAtras))
+    fun ventasPorHoraEntre(inicio: Long, fin: Long): Flow<List<VentaPorHora>> =
+        reporteDao.observarVentasPorHora(inicio, fin)
 
-    fun ventasPorPlataforma(diasAtras: Int = 0): Flow<List<VentaPorOrigen>> =
-        reporteDao.observarVentasPorOrigen(Fechas.inicioDelDia(diasAtras), Fechas.finDelDia(diasAtras))
+    fun ventasPorProductoEntre(inicio: Long, fin: Long): Flow<List<VentaPorProducto>> =
+        reporteDao.observarVentasPorProducto(inicio, fin)
+
+    fun ventasPorPlataformaEntre(inicio: Long, fin: Long): Flow<List<VentaPorOrigen>> =
+        reporteDao.observarVentasPorOrigen(inicio, fin)
 
     private fun calcularVariacion(hoy: Long, ayer: Long): Int? =
         if (ayer == 0L) null else ((hoy - ayer) * 100 / ayer).toInt()
