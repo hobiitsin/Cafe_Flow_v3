@@ -1,6 +1,7 @@
 package com.example.cafe_flow_v3
 
-
+import com.example.cafe_flow_v3.ui.mas.MasScreen
+import com.example.cafe_flow_v3.ui.inventario.InventarioScreen
 import com.example.cafe_flow_v3.ui.pedidos.PedidosScreen
 import com.example.cafe_flow_v3.ui.ventas.VentasScreen
 import androidx.compose.foundation.background
@@ -115,31 +116,16 @@ fun DashboardScreen(
 
             2 -> PedidosScreen(modifier = contenidoModifier)
 
-            3 -> PantallaEnConstruccion(
-                titulo = "Inventario",
-                descripcion = "Aquí irán las existencias, productos agotados y alertas de bajo inventario.",
-                icono = Icons.Outlined.Inventory2,
+            3 -> InventarioScreen(modifier = contenidoModifier)
+
+            4 -> MasScreen(
+                nombreUsuario = uiState.nombreUsuario,
+                onVerPedidos = { selectedTab = 2 },
+                onCerrarSesion = {
+                    viewModel.cerrarSesion()
+                    onCerrarSesion()
+                },
                 modifier = contenidoModifier
-            )
-            4 -> PantallaEnConstruccion(
-                titulo = "Más",
-                descripcion = "Aquí irán Productos, Reportes y Pedidos externos.",
-                icono = Icons.Outlined.MoreHoriz,
-                modifier = contenidoModifier,
-                accion = {
-                    OutlinedButton(
-                        onClick = {
-                            viewModel.cerrarSesion()
-                            onCerrarSesion()
-                        },
-                        shape = RoundedCornerShape(12.dp),
-                        colors = ButtonDefaults.outlinedButtonColors(contentColor = RedBadgeText)
-                    ) {
-                        Icon(Icons.Outlined.Logout, contentDescription = null, modifier = Modifier.size(18.dp))
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text("Cerrar sesión", fontWeight = FontWeight.Bold)
-                    }
-                }
             )
         }
     }

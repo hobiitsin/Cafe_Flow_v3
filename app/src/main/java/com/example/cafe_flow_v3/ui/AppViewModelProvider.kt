@@ -6,8 +6,10 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.cafe_flow_v3.CafeFlowApplication
 import com.example.cafe_flow_v3.ui.dashboard.DashboardViewModel
+import com.example.cafe_flow_v3.ui.inventario.InventarioViewModel
 import com.example.cafe_flow_v3.ui.login.LoginViewModel
 import com.example.cafe_flow_v3.ui.pedidos.PedidosViewModel
+import com.example.cafe_flow_v3.ui.productos.ProductosViewModel
 import com.example.cafe_flow_v3.ui.ventas.VentasViewModel
 
 /**
@@ -46,6 +48,18 @@ object AppViewModelProvider {
         initializer {
             PedidosViewModel(
                 pedidoRepository = cafeFlowApp().container.pedidoRepository
+            )
+        }
+
+        initializer {
+            InventarioViewModel(
+                productoRepository = cafeFlowApp().container.productoRepository
+            )
+        }
+
+        initializer {
+            ProductosViewModel(
+                productoRepository = cafeFlowApp().container.productoRepository
             )
         }
     }
