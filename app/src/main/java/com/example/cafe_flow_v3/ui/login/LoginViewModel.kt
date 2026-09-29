@@ -45,6 +45,7 @@ class LoginViewModel(
         _uiState.update { it.copy(passwordVisible = !it.passwordVisible) }
     }
 
+    // Funcion de iniciar sesion
     fun iniciarSesion() {
         val estado = _uiState.value
         if (estado.cargando) return // evita doble clic
